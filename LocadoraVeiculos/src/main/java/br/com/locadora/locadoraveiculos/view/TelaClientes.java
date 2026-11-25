@@ -1,12 +1,12 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
 package br.com.locadora.locadoraveiculos.view;
+
 import br.com.locadora.locadoraveiculos.controller.ControllerInfo;
 import br.com.locadora.locadoraveiculos.model.Cliente;
 import br.com.locadora.locadoraveiculos.model.Veiculo;
-import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
@@ -14,19 +14,21 @@ import javax.swing.table.AbstractTableModel;
  *
  * @author anaca
  */
-public class TelaClientes extends javax.swing.JFrame {
+public class TelaClientes extends javax.swing.JPanel implements Atualizavel {
     private List<Cliente> clientes =
         ControllerInfo.getClientes();
-    private ModeloTabelaClientes modeloTabela = new ModeloTabelaClientes();
+    private TelaClientes.ModeloTabelaClientes modeloTabela = new TelaClientes.ModeloTabelaClientes();
     
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(TelaClientes.class.getName());
-
     /**
      * Creates new form TelaClientes
+     * @param nv interface de navegação para interagir com CardLayout no JFrame,
+     *      implementada por {@code TelaInicial}
      */
-    public TelaClientes() {
+    public TelaClientes(Navegador nv) {
         initComponents();
         tblClientes.setModel(modeloTabela);
+        
+        btnVoltar.addActionListener(e -> nv.irPara(TelaInicial.MENU));
     }
 
     /**
@@ -38,12 +40,6 @@ public class TelaClientes extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
-        jScrollPane8 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
-        jScrollPane9 = new javax.swing.JScrollPane();
-        jTable3 = new javax.swing.JTable();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         Sobrenome = new javax.swing.JLabel();
@@ -56,45 +52,14 @@ public class TelaClientes extends javax.swing.JFrame {
         txtRg = new javax.swing.JTextField();
         txtCpf = new javax.swing.JTextField();
         txtEndereco = new javax.swing.JTextField();
+        jScrollPane10 = new javax.swing.JScrollPane();
+        tblClientes = new javax.swing.JTable();
+        jPanel3 = new javax.swing.JPanel();
         btnCadastrar = new javax.swing.JButton();
         btnAtualizar = new javax.swing.JButton();
         btnExcluir = new javax.swing.JButton();
         btnLimpar = new javax.swing.JButton();
-        jScrollPane10 = new javax.swing.JScrollPane();
-        tblClientes = new javax.swing.JTable();
-
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
-
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jScrollPane8.setViewportView(jTable2);
-
-        jTable3.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jScrollPane9.setViewportView(jTable3);
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Locadora de Veículos - Cadastro de Clientes");
+        btnVoltar = new javax.swing.JButton();
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Dados do Cliente"));
 
@@ -107,8 +72,6 @@ public class TelaClientes extends javax.swing.JFrame {
         Cpf.setText("CPF:");
 
         Endereco.setText("Endereço:");
-
-        txtNome.addActionListener(this::txtNomeActionPerformed);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -181,18 +144,6 @@ public class TelaClientes extends javax.swing.JFrame {
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
-        btnCadastrar.setText("Cadastrar");
-        btnCadastrar.addActionListener(this::btnCadastrarActionPerformed);
-
-        btnAtualizar.setText("Atualizar");
-        btnAtualizar.addActionListener(this::btnAtualizarActionPerformed);
-
-        btnExcluir.setText("Excluir");
-        btnExcluir.addActionListener(this::btnExcluirActionPerformed);
-
-        btnLimpar.setText("Limpar");
-        btnLimpar.addActionListener(this::btnLimparActionPerformed);
-
         tblClientes.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
@@ -211,28 +162,67 @@ public class TelaClientes extends javax.swing.JFrame {
         });
         jScrollPane10.setViewportView(tblClientes);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
+        btnCadastrar.setText("Cadastrar");
+        btnCadastrar.addActionListener(this::btnCadastrarActionPerformed);
+
+        btnAtualizar.setText("Atualizar");
+        btnAtualizar.addActionListener(this::btnAtualizarActionPerformed);
+
+        btnExcluir.setText("Excluir");
+        btnExcluir.addActionListener(this::btnExcluirActionPerformed);
+
+        btnLimpar.setText("Limpar");
+        btnLimpar.addActionListener(this::btnLimparActionPerformed);
+
+        btnVoltar.setText("Voltar");
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(btnCadastrar)
+                .addGap(36, 36, 36)
+                .addComponent(btnAtualizar)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnExcluir)
+                .addGap(46, 46, 46)
+                .addComponent(btnLimpar)
+                .addContainerGap())
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnVoltar)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnCadastrar)
+                    .addComponent(btnAtualizar)
+                    .addComponent(btnExcluir)
+                    .addComponent(btnLimpar))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnVoltar)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(btnCadastrar)
-                        .addGap(36, 36, 36)
-                        .addComponent(btnAtualizar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnExcluir)
-                        .addGap(46, 46, 46)
-                        .addComponent(btnLimpar))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(23, 23, 23))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(12, Short.MAX_VALUE)
-                .addComponent(jScrollPane10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(jScrollPane10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addGap(23, 23, 23))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -240,83 +230,51 @@ public class TelaClientes extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnCadastrar)
-                    .addComponent(btnAtualizar)
-                    .addComponent(btnExcluir)
-                    .addComponent(btnLimpar))
-                .addGap(18, 18, 18)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane10, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(263, Short.MAX_VALUE))
+                .addContainerGap(231, Short.MAX_VALUE))
         );
-
-        pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarActionPerformed
 
-    String nome = txtNome.getText();
-    String sobrenome = txtSobrenome.getText();
-    String rg = txtRg.getText();
-    String cpf = txtCpf.getText();
-    String endereco = txtEndereco.getText();
+        String nome = txtNome.getText();
+        String sobrenome = txtSobrenome.getText();
+        String rg = txtRg.getText();
+        String cpf = txtCpf.getText();
+        String endereco = txtEndereco.getText();
 
-    if (nome.isEmpty() || sobrenome.isEmpty() ||
-        rg.isEmpty() || cpf.isEmpty() || endereco.isEmpty()) {
+        if (nome.isEmpty() || sobrenome.isEmpty() ||
+            rg.isEmpty() || cpf.isEmpty() || endereco.isEmpty()) {
 
-        javax.swing.JOptionPane.showMessageDialog(this,
+            javax.swing.JOptionPane.showMessageDialog(this,
                 "Preencha todos os campos!");
 
-        return;
-    }
+            return;
+        }
 
-    Cliente cliente = new Cliente(nome, sobrenome, rg, cpf, endereco);
+        Cliente cliente = new Cliente(nome, sobrenome, rg, cpf, endereco);
 
-    clientes.add(cliente);
+        clientes.add(cliente);
 
-    modeloTabela.fireTableDataChanged();
+        modeloTabela.fireTableDataChanged();
 
-    btnLimparActionPerformed(evt);
+        btnLimparActionPerformed(evt);
 
-    javax.swing.JOptionPane.showMessageDialog(this,
+        javax.swing.JOptionPane.showMessageDialog(this,
             "Cliente cadastrado com sucesso!");
     }//GEN-LAST:event_btnCadastrarActionPerformed
-
-    private void btnLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimparActionPerformed
-        txtNome.setText("");
-        txtSobrenome.setText("");
-        txtRg.setText("");
-        txtCpf.setText("");
-        txtEndereco.setText(""); 
-    }//GEN-LAST:event_btnLimparActionPerformed
-
-    private void txtNomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNomeActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtNomeActionPerformed
-
-    private void tblClientesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblClientesMouseClicked
-        int linha = tblClientes.getSelectedRow();
-
-        if (linha >= 0) {
-            Cliente cliente = clientes.get(linha);
-
-            txtNome.setText(cliente.getNome());
-            txtSobrenome.setText(cliente.getSobrenome());
-            txtRg.setText(cliente.getRg());
-            txtCpf.setText(cliente.getCpf());
-            txtEndereco.setText(cliente.getEndereco());
-        }
-    }//GEN-LAST:event_tblClientesMouseClicked
 
     private void btnAtualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtualizarActionPerformed
         int linha = tblClientes.getSelectedRow();
 
         if (linha < 0) {
             javax.swing.JOptionPane.showMessageDialog(this,
-                    "Selecione um cliente na tabela!");
+                "Selecione um cliente na tabela!");
             return;
         }
-        
+
         if (txtNome.getText().isEmpty() ||
             txtSobrenome.getText().isEmpty() ||
             txtRg.getText().isEmpty() ||
@@ -324,7 +282,7 @@ public class TelaClientes extends javax.swing.JFrame {
             txtEndereco.getText().isEmpty()) {
 
             javax.swing.JOptionPane.showMessageDialog(this,
-                    "Preencha todos os campos!");
+                "Preencha todos os campos!");
             return;
         }
 
@@ -345,7 +303,7 @@ public class TelaClientes extends javax.swing.JFrame {
         btnLimparActionPerformed(evt);
 
         javax.swing.JOptionPane.showMessageDialog(this,
-                "Cliente atualizado com sucesso!");
+            "Cliente atualizado com sucesso!");
     }//GEN-LAST:event_btnAtualizarActionPerformed
 
     private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
@@ -353,7 +311,7 @@ public class TelaClientes extends javax.swing.JFrame {
 
         if (linha < 0) {
             javax.swing.JOptionPane.showMessageDialog(this,
-                    "Selecione um cliente na tabela!");
+                "Selecione um cliente na tabela!");
             return;
         }
 
@@ -364,15 +322,15 @@ public class TelaClientes extends javax.swing.JFrame {
                 veiculo.getLocacao().getCliente().equals(cliente)) {
 
                 javax.swing.JOptionPane.showMessageDialog(this,
-                        "Não é possível excluir este cliente, pois ele possui um veículo alugado!");
+                    "Não é possível excluir este cliente, pois ele possui um veículo alugado!");
                 return;
             }
         }
         int resposta = javax.swing.JOptionPane.showConfirmDialog(
-                this,
-                "Deseja realmente excluir este cliente?",
-                "Confirmar exclusão",
-                javax.swing.JOptionPane.YES_NO_OPTION
+            this,
+            "Deseja realmente excluir este cliente?",
+            "Confirmar exclusão",
+            javax.swing.JOptionPane.YES_NO_OPTION
         );
 
         if (resposta == javax.swing.JOptionPane.YES_OPTION) {
@@ -381,33 +339,41 @@ public class TelaClientes extends javax.swing.JFrame {
             btnLimparActionPerformed(evt);
 
             javax.swing.JOptionPane.showMessageDialog(this,
-                    "Cliente excluído com sucesso!");
+                "Cliente excluído com sucesso!");
         }
     }//GEN-LAST:event_btnExcluirActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
+    private void btnLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimparActionPerformed
+        txtNome.setText("");
+        txtSobrenome.setText("");
+        txtRg.setText("");
+        txtCpf.setText("");
+        txtEndereco.setText("");
+    }//GEN-LAST:event_btnLimparActionPerformed
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new TelaClientes().setVisible(true));
+    private void tblClientesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblClientesMouseClicked
+        int linha = tblClientes.getSelectedRow();
+
+        if (linha >= 0) {
+            Cliente cliente = clientes.get(linha);
+
+            txtNome.setText(cliente.getNome());
+            txtSobrenome.setText(cliente.getSobrenome());
+            txtRg.setText(cliente.getRg());
+            txtCpf.setText(cliente.getCpf());
+            txtEndereco.setText(cliente.getEndereco());
+        }
+    }//GEN-LAST:event_tblClientesMouseClicked
+
+    @Override
+    public void aoExibir() {
+        txtCpf.setText("");
+        txtEndereco.setText("");
+        txtNome.setText("");
+        txtRg.setText("");
+        txtSobrenome.setText("");
+        
+        // reload da tabela
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -420,15 +386,11 @@ public class TelaClientes extends javax.swing.JFrame {
     private javax.swing.JButton btnCadastrar;
     private javax.swing.JButton btnExcluir;
     private javax.swing.JButton btnLimpar;
+    private javax.swing.JButton btnVoltar;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane10;
-    private javax.swing.JScrollPane jScrollPane8;
-    private javax.swing.JScrollPane jScrollPane9;
-    private javax.swing.JTable jTable2;
-    private javax.swing.JTable jTable3;
-    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTable tblClientes;
     private javax.swing.JTextField txtCpf;
     private javax.swing.JTextField txtEndereco;
@@ -438,7 +400,7 @@ public class TelaClientes extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
     private class ModeloTabelaClientes extends AbstractTableModel {
 
-    private String[] colunas = {
+    private final String[] colunas = {
         "Nome", "Sobrenome", "RG", "CPF", "Endereço"
     };
 
@@ -461,14 +423,14 @@ public class TelaClientes extends javax.swing.JFrame {
     public Object getValueAt(int linha, int coluna) {
         Cliente c = clientes.get(linha);
 
-        switch (coluna) {
-            case 0: return c.getNome();
-            case 1: return c.getSobrenome();
-            case 2: return c.getRg();
-            case 3: return c.getCpf();
-            case 4: return c.getEndereco();
-            default: return null;
-        }
+        return switch (coluna) {
+            case 0 -> c.getNome();
+            case 1 -> c.getSobrenome();
+            case 2 -> c.getRg();
+            case 3 -> c.getCpf();
+            case 4 -> c.getEndereco();
+            default -> null;
+        };
     }
     }
 }
