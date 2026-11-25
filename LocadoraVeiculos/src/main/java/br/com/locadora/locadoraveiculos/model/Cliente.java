@@ -23,6 +23,26 @@ public class Cliente {
         this.endereco = endereco;
     }
     
+    public String getNome() {
+    return nome;
+    }
+
+    public String getSobrenome() {
+        return sobrenome;
+    }
+
+    public String getRg() {
+        return rg;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public String getEndereco() {
+        return endereco;
+    }
+    
     // necessario decidir o que podera ser atualizado para criar os setters
     // e definir o restante como final
 }
