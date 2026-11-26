@@ -8,28 +8,33 @@ import br.com.locadora.locadoraveiculos.controller.ClienteController;
 import br.com.locadora.locadoraveiculos.model.Cliente;
 import br.com.locadora.locadoraveiculos.model.Veiculo;
 import javax.swing.table.AbstractTableModel;
+import java.util.List;
 
 /**
  *
  * @author anaca
  */
 public class TelaClientes extends javax.swing.JPanel implements Atualizavel {
+    private List<Cliente> clientes;
     private final ClienteController clienteCtrl;
-    private final TelaClientes.ModeloTabelaClientes modeloTabela = new TelaClientes.ModeloTabelaClientes();
+    private final ModeloTabelaClientes modeloTabela =
+            new ModeloTabelaClientes();
     
     /**
      * Creates new form TelaClientes
      * @param nv interface de navegação para interagir com CardLayout no JFrame,
      *      implementada por {@code TelaInicial}
      * @param clienteCtrl
-     */
-    public TelaClientes(Navegador nv, ClienteController clienteCtrl) {
-        this.clienteCtrl = clienteCtrl;
-        initComponents();
-        tblClientes.setModel(modeloTabela);
-        
-        btnVoltar.addActionListener(e -> nv.irPara(TelaInicial.MENU));
-    }
+    */
+       public TelaClientes(Navegador nv, ClienteController clienteCtrl) {
+           this.clienteCtrl = clienteCtrl;
+           this.clientes = clienteCtrl.getClientes();
+
+           initComponents();
+           tblClientes.setModel(modeloTabela);
+
+           btnVoltar.addActionListener(e -> nv.irPara(TelaInicial.MENU));
+       }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -174,13 +179,11 @@ public class TelaClientes extends javax.swing.JPanel implements Atualizavel {
         btnLimpar.setText("Limpar");
         btnLimpar.addActionListener(this::btnLimparActionPerformed);
 
-        btnVoltar.setText("Voltar");
-
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+            .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(btnCadastrar)
                 .addGap(36, 36, 36)
@@ -190,10 +193,6 @@ public class TelaClientes extends javax.swing.JPanel implements Atualizavel {
                 .addGap(46, 46, 46)
                 .addComponent(btnLimpar)
                 .addContainerGap())
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnVoltar)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -204,10 +203,10 @@ public class TelaClientes extends javax.swing.JPanel implements Atualizavel {
                     .addComponent(btnAtualizar)
                     .addComponent(btnExcluir)
                     .addComponent(btnLimpar))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnVoltar)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(35, Short.MAX_VALUE))
         );
+
+        btnVoltar.setText("Voltar");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -216,6 +215,9 @@ public class TelaClientes extends javax.swing.JPanel implements Atualizavel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btnVoltar))
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
@@ -233,37 +235,31 @@ public class TelaClientes extends javax.swing.JPanel implements Atualizavel {
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane10, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(231, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(btnVoltar)
+                .addContainerGap(190, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarActionPerformed
+        try {
+            clienteCtrl.incluir(
+                txtNome.getText(),
+                txtSobrenome.getText(),
+                txtRg.getText(),
+                txtCpf.getText(),
+                txtEndereco.getText()
+            );
 
-        String nome = txtNome.getText().trim();
-        String sobrenome = txtSobrenome.getText().trim();
-        String rg = txtRg.getText().trim();
-        String cpf = txtCpf.getText().trim();
-        String endereco = txtEndereco.getText().trim();
-
-        if (nome.isEmpty() || sobrenome.isEmpty() ||
-            rg.isEmpty() || cpf.isEmpty() || endereco.isEmpty()) {
+            modeloTabela.fireTableDataChanged();
+            btnLimparActionPerformed(evt);
 
             javax.swing.JOptionPane.showMessageDialog(this,
-                "Preencha todos os campos!");
+                    "Cliente cadastrado com sucesso!");
 
-            return;
+        } catch (IllegalArgumentException ex) {
+            javax.swing.JOptionPane.showMessageDialog(this, ex.getMessage());
         }
-
-        Cliente cliente = new Cliente(nome, sobrenome, rg, cpf, endereco);
-
-        clientes.add(cliente);
-
-        modeloTabela.fireTableDataChanged();
-
-        btnLimparActionPerformed(evt);
-
-        javax.swing.JOptionPane.showMessageDialog(this,
-            "Cliente cadastrado com sucesso!");
     }//GEN-LAST:event_btnCadastrarActionPerformed
 
     private void btnAtualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtualizarActionPerformed
@@ -271,39 +267,31 @@ public class TelaClientes extends javax.swing.JPanel implements Atualizavel {
 
         if (linha < 0) {
             javax.swing.JOptionPane.showMessageDialog(this,
-                "Selecione um cliente na tabela!");
-            return;
-        }
-
-        if (txtNome.getText().isEmpty() ||
-            txtSobrenome.getText().isEmpty() ||
-            txtRg.getText().isEmpty() ||
-            txtCpf.getText().isEmpty() ||
-            txtEndereco.getText().isEmpty()) {
-
-            javax.swing.JOptionPane.showMessageDialog(this,
-                "Preencha todos os campos!");
+                    "Selecione um cliente na tabela!");
             return;
         }
 
         Cliente cliente = modeloTabela.getCliente(linha);
 
-        cliente = new Cliente(
-            txtNome.getText(),
-            txtSobrenome.getText(),
-            txtRg.getText(),
-            txtCpf.getText(),
-            txtEndereco.getText()
-        );
+        try {
+            clienteCtrl.atualizar(
+                cliente,
+                txtNome.getText(),
+                txtSobrenome.getText(),
+                txtRg.getText(),
+                txtCpf.getText(),
+                txtEndereco.getText()
+            );
 
-        clientes.set(linha, cliente);
+            modeloTabela.fireTableRowsUpdated(linha, linha);
+            btnLimparActionPerformed(evt);
 
-        modeloTabela.fireTableDataChanged();
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Cliente atualizado com sucesso!");
 
-        btnLimparActionPerformed(evt);
-
-        javax.swing.JOptionPane.showMessageDialog(this,
-            "Cliente atualizado com sucesso!");
+        } catch (IllegalArgumentException ex) {
+            javax.swing.JOptionPane.showMessageDialog(this, ex.getMessage());
+        }
     }//GEN-LAST:event_btnAtualizarActionPerformed
 
     private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
@@ -311,35 +299,32 @@ public class TelaClientes extends javax.swing.JPanel implements Atualizavel {
 
         if (linha < 0) {
             javax.swing.JOptionPane.showMessageDialog(this,
-                "Selecione um cliente na tabela!");
+                    "Selecione um cliente na tabela!");
             return;
         }
 
-        Cliente cliente = clientes.get(linha);
+        Cliente cliente = modeloTabela.getCliente(linha);
 
-        for (Veiculo veiculo : ControllerInfo.getVeiculos()) {
-            if (veiculo.getLocacao() != null &&
-                veiculo.getLocacao().getCliente().equals(cliente)) {
-
-                javax.swing.JOptionPane.showMessageDialog(this,
-                    "Não é possível excluir este cliente, pois ele possui um veículo alugado!");
-                return;
-            }
-        }
         int resposta = javax.swing.JOptionPane.showConfirmDialog(
-            this,
-            "Deseja realmente excluir este cliente?",
-            "Confirmar exclusão",
-            javax.swing.JOptionPane.YES_NO_OPTION
+                this,
+                "Deseja realmente excluir este cliente?",
+                "Confirmar exclusão",
+                javax.swing.JOptionPane.YES_NO_OPTION
         );
 
         if (resposta == javax.swing.JOptionPane.YES_OPTION) {
-            clientes.remove(linha);
-            modeloTabela.fireTableDataChanged();
-            btnLimparActionPerformed(evt);
+            try {
+                clienteCtrl.excluir(cliente);
 
-            javax.swing.JOptionPane.showMessageDialog(this,
-                "Cliente excluído com sucesso!");
+                modeloTabela.fireTableDataChanged();
+                btnLimparActionPerformed(evt);
+
+                javax.swing.JOptionPane.showMessageDialog(this,
+                        "Cliente excluído com sucesso!");
+
+            } catch (IllegalArgumentException ex) {
+                javax.swing.JOptionPane.showMessageDialog(this, ex.getMessage());
+            }
         }
     }//GEN-LAST:event_btnExcluirActionPerformed
 
