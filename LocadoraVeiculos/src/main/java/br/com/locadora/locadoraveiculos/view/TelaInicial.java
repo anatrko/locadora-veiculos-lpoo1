@@ -41,7 +41,7 @@ public final class TelaInicial extends javax.swing.JFrame
         adicionarTela(new TelaMenu(this), MENU);
         adicionarTela(new TelaClientes(this, clienteCtrl), MANTER_CLIENTE);
         adicionarTela(new TelaIncluirVeiculo(this, veiculoCtrl), INCLUIR_VEICULO);
-        adicionarTela(new TelaLocarVeiculo(this, locacaoCtrl, veiculoCtrl, clienteCtrl), LOCAR_VEICULO);
+        adicionarTela(new TelaLocarVeiculo(this, clienteCtrl, veiculoCtrl, locacaoCtrl), LOCAR_VEICULO);
         adicionarTela(new TelaDevolverVeiculo(this, locacaoCtrl), DEVOLVER_VEICULO);
         adicionarTela(new TelaVenderVeiculo(this, veiculoCtrl), VENDER_VEICULO);
         
