@@ -81,14 +81,17 @@ public class ClienteController {
         clientes.excluir(cliente);
     }
     
+
     private boolean verificaNome(String nome) {
-        String regex = "^([A-ZÀ-Ÿ][a-zà-ÿ ]+[ ]*)+$";
+        String regex = "^[\\p{L}]+(?:[ ]+[\\p{L}]+)*$";
         return nome.length() >= 3 && nome.matches(regex);
     }
+
     private boolean verificaSobrenome(String sobrenome) {
-        String regex = "^([A-ZÀ-Ÿa-z][a-zà-ÿ ]+[ ]*)+$";
-        return sobrenome.matches(regex);
+        String regex = "^[\\p{L}]+(?:[ ]+[\\p{L}]+)*$";
+        return sobrenome.length() >= 3 && sobrenome.matches(regex);
     }
+
     
     public List<Cliente> getClientes() {
         return clientes.listar();
