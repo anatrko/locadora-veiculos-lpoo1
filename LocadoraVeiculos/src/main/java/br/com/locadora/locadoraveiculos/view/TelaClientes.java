@@ -4,10 +4,9 @@
  */
 package br.com.locadora.locadoraveiculos.view;
 
-import br.com.locadora.locadoraveiculos.controller.ControllerInfo;
+import br.com.locadora.locadoraveiculos.controller.ClienteController;
 import br.com.locadora.locadoraveiculos.model.Cliente;
 import br.com.locadora.locadoraveiculos.model.Veiculo;
-import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
 /**
@@ -15,16 +14,17 @@ import javax.swing.table.AbstractTableModel;
  * @author anaca
  */
 public class TelaClientes extends javax.swing.JPanel implements Atualizavel {
-    private List<Cliente> clientes =
-        ControllerInfo.getClientes();
-    private TelaClientes.ModeloTabelaClientes modeloTabela = new TelaClientes.ModeloTabelaClientes();
+    private final ClienteController clienteCtrl;
+    private final TelaClientes.ModeloTabelaClientes modeloTabela = new TelaClientes.ModeloTabelaClientes();
     
     /**
      * Creates new form TelaClientes
      * @param nv interface de navegação para interagir com CardLayout no JFrame,
      *      implementada por {@code TelaInicial}
+     * @param clienteCtrl
      */
-    public TelaClientes(Navegador nv) {
+    public TelaClientes(Navegador nv, ClienteController clienteCtrl) {
+        this.clienteCtrl = clienteCtrl;
         initComponents();
         tblClientes.setModel(modeloTabela);
         
@@ -239,11 +239,11 @@ public class TelaClientes extends javax.swing.JPanel implements Atualizavel {
 
     private void btnCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarActionPerformed
 
-        String nome = txtNome.getText();
-        String sobrenome = txtSobrenome.getText();
-        String rg = txtRg.getText();
-        String cpf = txtCpf.getText();
-        String endereco = txtEndereco.getText();
+        String nome = txtNome.getText().trim();
+        String sobrenome = txtSobrenome.getText().trim();
+        String rg = txtRg.getText().trim();
+        String cpf = txtCpf.getText().trim();
+        String endereco = txtEndereco.getText().trim();
 
         if (nome.isEmpty() || sobrenome.isEmpty() ||
             rg.isEmpty() || cpf.isEmpty() || endereco.isEmpty()) {
@@ -286,7 +286,7 @@ public class TelaClientes extends javax.swing.JPanel implements Atualizavel {
             return;
         }
 
-        Cliente cliente = clientes.get(linha);
+        Cliente cliente = modeloTabela.getCliente(linha);
 
         cliente = new Cliente(
             txtNome.getText(),
@@ -432,5 +432,10 @@ public class TelaClientes extends javax.swing.JPanel implements Atualizavel {
             default -> null;
         };
     }
+    
+    public Cliente getCliente(int linha) {
+        return clientes.get(linha);
+    }
+    
     }
 }

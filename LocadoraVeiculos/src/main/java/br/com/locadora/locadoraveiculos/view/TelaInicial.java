@@ -4,6 +4,7 @@
  */
 package br.com.locadora.locadoraveiculos.view;
 
+import br.com.locadora.locadoraveiculos.controller.*;
 import java.awt.CardLayout;
 import java.awt.Component;
 import javax.swing.JPanel;
@@ -27,16 +28,22 @@ public final class TelaInicial extends javax.swing.JFrame
 
     /**
      * Creates new form TelaMenu
+     * @param clienteCtrl Referencia para o controlador da lista de clientes
+     * @param veiculoCtrl Referencia para o controlador da lista de veiculos, acesso a controle sobre o que tange veiculos nao locados
+     * @param locacaoCtrl Referencia para o controlador da lista de veiculos, acesso e controle sobre o que tange veiculos locados
      */
-    public TelaInicial() {
+    public TelaInicial(
+            ClienteController clienteCtrl, 
+            VeiculoController veiculoCtrl,
+            LocacaoController locacaoCtrl) {
         initComponents();
         container.setLayout(cl);
         adicionarTela(new TelaMenu(this), MENU);
-        adicionarTela(new TelaClientes(this), MANTER_CLIENTE);
-        adicionarTela(new TelaIncluirVeiculo(this), INCLUIR_VEICULO);
-        adicionarTela(new TelaLocarVeiculo(this), LOCAR_VEICULO);
-        adicionarTela(new TelaDevolverVeiculo(this), DEVOLVER_VEICULO);
-        adicionarTela(new TelaVenderVeiculo(this), VENDER_VEICULO);
+        adicionarTela(new TelaClientes(this, clienteCtrl), MANTER_CLIENTE);
+        adicionarTela(new TelaIncluirVeiculo(this, veiculoCtrl), INCLUIR_VEICULO);
+        adicionarTela(new TelaLocarVeiculo(this, locacaoCtrl, veiculoCtrl, clienteCtrl), LOCAR_VEICULO);
+        adicionarTela(new TelaDevolverVeiculo(this, locacaoCtrl), DEVOLVER_VEICULO);
+        adicionarTela(new TelaVenderVeiculo(this, veiculoCtrl), VENDER_VEICULO);
         
         setLocationRelativeTo(null);
         pack();
@@ -93,9 +100,7 @@ public final class TelaInicial extends javax.swing.JFrame
             logger.log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new TelaInicial().setVisible(true));
+        
     }
     
     @Override

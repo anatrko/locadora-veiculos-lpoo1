@@ -4,19 +4,24 @@
  */
 package br.com.locadora.locadoraveiculos.view;
 
+import br.com.locadora.locadoraveiculos.controller.LocacaoController;
+
 /**
  *
  * @author harpo
  */
 public class TelaDevolverVeiculo extends javax.swing.JPanel
-    implements Atualizavel {
+        implements Atualizavel {
+    private final LocacaoController locacaoCtrl;
 
     /**
      * Creates new form TelaDevolverVeiculo
      * @param nv interface de navegação para interagir com CardLayout no JFrame,
      *      implementada por {@code TelaInicial}
+     * @param locacaoCtrl
      */
-    public TelaDevolverVeiculo(Navegador nv) {
+    public TelaDevolverVeiculo(Navegador nv, LocacaoController locacaoCtrl) {
+        this.locacaoCtrl = locacaoCtrl;
         initComponents();
         
         // descomentar ao inserir o botao para voltar ao menu
