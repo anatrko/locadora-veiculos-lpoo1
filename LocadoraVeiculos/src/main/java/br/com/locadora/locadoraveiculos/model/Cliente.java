@@ -29,9 +29,9 @@ public class Cliente {
     public String getCpf() { return cpf; }
     public String getEndereco() { return endereco; }
 
-    public void setNome(String nome) { this.nome = nome; }
-    public void setSobrenome(String sobrenome) { this.sobrenome = sobrenome; }
-    public void setRg(String rg) { this.rg = rg; }
-    public void setCpf(String cpf) { this.cpf = cpf; }
-    public void setEndereco(String endereco) { this.endereco = endereco; }    
+    protected void setNome(String nome) { this.nome = nome; }
+    protected void setSobrenome(String sobrenome) { this.sobrenome = sobrenome; }
+    protected void setRg(String rg) { this.rg = rg; }
+    protected void setCpf(String cpf) { this.cpf = cpf; }
+    protected void setEndereco(String endereco) { this.endereco = endereco; }    
 }
