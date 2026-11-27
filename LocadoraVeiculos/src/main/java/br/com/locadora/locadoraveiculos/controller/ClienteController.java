@@ -17,14 +17,14 @@ public class ClienteController {
     
     public void incluir(String nome, String sobrenome, String rg, String cpf, String endereco) 
             throws IllegalArgumentException {
+        // verificacao e conversoes
+        if( nome.isBlank() || sobrenome.isBlank() || rg.isBlank() || cpf.isBlank() || endereco.isBlank() )
+            throw new IllegalArgumentException("Preencha todos os campos!");
+        
         nome = nome.trim(); 
         sobrenome = sobrenome.trim();
         rg = rg.trim();
         endereco = endereco.trim();
-        
-        // verificacao e conversoes
-        if( nome.isBlank() || sobrenome.isBlank() || rg.isBlank() || cpf.isBlank() || endereco.isBlank() )
-            throw new IllegalArgumentException("Preencha todos os campos!");
         
         if(!cpf.matches("^\\d{3}.\\d{3}.\\d{3}-\\d{2}$"))
             throw new IllegalArgumentException("Formato do CPF incorreto!");
@@ -35,13 +35,11 @@ public class ClienteController {
         
         if( !verificaNome(nome) )
             throw new IllegalArgumentException("Preencha o nome corretamente! "
-                        + "Deve possuir mais de tres caracteres e sem numeros");
+                        + "Deve possuir mais de três caracteres e sem números");
         
         if( !verificaSobrenome(sobrenome) )
-            throw new IllegalArgumentException("Preencha o sobrenome corretamente!"
-                    + "Nao deve possuir numeros nem caracteres especiais");
-        
-        /* caso implementar verificacao do rg ou cpf --- faze-lo aqui  ---*/
+            throw new IllegalArgumentException("Preencha o sobrenome corretamente! "
+                    + "Não deve possuir números nem caracteres especiais");
         
         // instancia um novo cliente e inclui-o na lista
         Cliente novo = new Cliente(nome, sobrenome, rg, cpf, endereco);
@@ -57,6 +55,11 @@ public class ClienteController {
         
         if( nome.isBlank() || sobrenome.isBlank() || rg.isBlank() || cpf.isBlank() || endereco.isBlank() )
             throw new IllegalArgumentException("Preencha todos os campos!");
+        nome = nome.trim();
+        sobrenome = sobrenome.trim();
+        rg = rg.trim();
+        cpf = cpf.trim();
+        endereco = endereco.trim();
         
         if(!cpf.matches("^\\d{3}.\\d{3}.\\d{3}-\\d{2}$"))
             throw new IllegalArgumentException("Formato do CPF incorreto!");
@@ -65,22 +68,20 @@ public class ClienteController {
         if( clientes.existeCpf(cpf, cliente) ) // procura um cpf igual, ignorando o cliente indicado
             throw new IllegalArgumentException("CPF encontrado no sistema. Não são permitidos dois clientes com mesmo CPF.");
         
-        if( !verificaNome(nome.trim()) )
+        if( !verificaNome(nome) )
             throw new IllegalArgumentException("Preencha o nome corretamente! "
-                        + "Deve possuir mais de tres caracteres e sem numeros");
+                        + "Deve possuir mais de três caracteres e sem números");
         
-        if( !verificaSobrenome(sobrenome.trim()) )
-            throw new IllegalArgumentException("Preencha o sobrenome corretamente!"
-                    + "Nao deve possuir numeros nem caracteres especiais");
+        if( !verificaSobrenome(sobrenome) )
+            throw new IllegalArgumentException("Preencha o sobrenome corretamente! "
+                    + "Não deve possuir números nem caracteres especiais");
         
-        // ao atribuir uma nova instancia de cliente ao cliente antigo
-        //  a instancia antiga continua sendo apontada por uma locacao ativa, o que gera inconsistencias
-        clientes.atualizar(cliente, nome.trim(), sobrenome.trim(), rg.trim(), cpf.trim(), endereco.trim());
+        clientes.atualizar(cliente, nome, sobrenome, rg, cpf, endereco);
     }
     
     public void excluir(Cliente cliente) throws IllegalArgumentException {
         if( cliente == null )
-            throw new IllegalArgumentException("Nenhum cliente selecionado para excluir. Selecione um clinte na tabela.");
+            throw new IllegalArgumentException("Nenhum cliente selecionado para excluir. Selecione um cliente na tabela.");
         
         if( veiculos.clientePossuiLocacao(cliente) )
             throw new IllegalArgumentException("Não é possível excluir este cliente, pois ele possui um veículo alugado!");

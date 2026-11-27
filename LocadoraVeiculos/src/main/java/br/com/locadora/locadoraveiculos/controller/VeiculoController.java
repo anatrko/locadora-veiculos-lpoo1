@@ -34,14 +34,14 @@ public class VeiculoController {
     public void incluir(TipoVeiculo tipo, Marca marca, Estado estado, Categoria categoria,
             Enum<?> modelo, double valor, String placa, String anoTxt) 
             throws IllegalArgumentException {
-        placa = placa.trim();
-        anoTxt = anoTxt.trim();
         
         if(tipo == null || marca == null || estado == null || categoria == null 
                 || modelo == null || placa.isBlank() || anoTxt.isBlank())
             throw new IllegalArgumentException("Preencha todos os campos!");
+        placa = placa.trim();
+        anoTxt = anoTxt.trim();
         
-        if(!placa.trim().matches("^[A-Z]{3}-\\d{4}$"))
+        if(!placa.matches("^[A-Z]{3}-\\d{4}$"))
             throw new IllegalArgumentException("Placa inválida. Use o formato XXX-0000 .");
         
         if( veiculos.existePlaca(placa) )
@@ -94,10 +94,10 @@ public class VeiculoController {
                     case AUTOMOVEL -> new Automovel(marca, estado, categoria, valor, placa, ano, (ModeloAutomovel) modelo);
                     case MOTOCICLETA -> new Motocicleta(marca, estado, categoria, valor, placa, ano, (ModeloMotocicleta) modelo);
                     case VAN -> new Van(marca, estado, categoria, valor, placa, ano, (ModeloVan) modelo);
-                    default -> throw new IllegalArgumentException("Tipo de veiculo invalido!");
+                    default -> throw new IllegalArgumentException("Tipo de veículo inválido!");
             };
         } catch(ClassCastException e) {
-            throw new IllegalArgumentException("O modelo selecionado nao corresponde ao tipo do veiculo!");
+            throw new IllegalArgumentException("O modelo selecionado não corresponde ao tipo do veículo!");
         }
     }
 }

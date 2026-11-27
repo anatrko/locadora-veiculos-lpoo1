@@ -35,10 +35,10 @@ public class LocacaoController {
             throws IllegalArgumentException {
         // valida as entradas
         if( cliente == null || veiculo == null)
-            throw new IllegalArgumentException("Cliente ou veículo não selecionado. Selecione um clinte e um veículo para locar.");
+            throw new IllegalArgumentException("Cliente ou veículo não selecionado. Selecione um cliente e um veículo para locar.");
         
             //valida se o veiculo esta disponivel
-        if( veiculo.getEstado() == Estado.LOCADO || veiculo.getEstado() == Estado.VENDIDO)
+        if( veiculo.getEstado() != Estado.DISPONIVEL && veiculo.getEstado() != Estado.NOVO)
             throw new IllegalArgumentException("Veículo escolhido não está disponível para locacação.");
         
         Calendar dataComparacao = (Calendar) data.clone();
@@ -50,12 +50,12 @@ public class LocacaoController {
         
         int dias;
         try {
-            dias = Integer.parseInt(diasTxt);
-            if( dias <= 0)
-                throw new IllegalArgumentException("Quantidade de dias inválida. Informe uma quantidade aceita: um ou mais dias.");
+            dias = Integer.parseInt(diasTxt.trim());
         } catch(NumberFormatException e) {
             throw new NumberFormatException("Informe a quantidade de dias corretamente.");
-        }        
+        }
+        if( dias <= 0 || dias > 60)
+            throw new IllegalArgumentException("Quantidade de dias inválida. Informe uma quantidade aceita: de 1 a 60 dias");
         
         // verifica se cliente selecionado ja possui locacao
         if( veiculos.clientePossuiLocacao(cliente) )
