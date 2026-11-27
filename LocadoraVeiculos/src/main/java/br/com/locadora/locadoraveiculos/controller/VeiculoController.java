@@ -32,27 +32,29 @@ public class VeiculoController {
         instancia e armazena na memoria
     */
     public void incluir(TipoVeiculo tipo, Marca marca, Estado estado, Categoria categoria,
-            Enum<?> modelo, String valorTxt, String placa, String anoTxt) 
+            Enum<?> modelo, double valor, String placa, String anoTxt) 
             throws IllegalArgumentException {
+        placa = placa.trim();
+        anoTxt = anoTxt.trim();
         
         if(tipo == null || marca == null || estado == null || categoria == null 
-                || modelo == null || valorTxt.isBlank() || placa.isBlank() || anoTxt.isBlank())
+                || modelo == null || placa.isBlank() || anoTxt.isBlank())
             throw new IllegalArgumentException("Preencha todos os campos!");
         
         if(!placa.trim().matches("^[A-Z]{3}-\\d{4}$"))
             throw new IllegalArgumentException("Placa inválida. Use o formato XXX-0000 .");
         
-        if ( veiculos.existePlaca(placa) )
-            throw new IllegalArgumentException("Placa encontrada no sistema. Não são permitidos dois veículos com a mesma placa.´d");
+        if( veiculos.existePlaca(placa) )
+            throw new IllegalArgumentException("Placa encontrada no sistema. Não são permitidos dois veículos com a mesma placa.");
         
-        double valor;
+        if(valor <= 0)
+            throw new IllegalArgumentException("Valor de Compra não pode ser igual ou inferior a zero.");
+        
         int ano;
-        
         try {
-            valor = Double.parseDouble(valorTxt.trim().replace(".", "").replace(",", "."));
             ano = Integer.parseInt(anoTxt);
         } catch(NumberFormatException e) {
-            throw new NumberFormatException("Valor de compra ou ano inválido!");
+            throw new NumberFormatException("Ano inválido!");
         }
         
         veiculos.incluir(criar(tipo, marca, estado, categoria, modelo, valor, placa, ano));

@@ -334,6 +334,7 @@ public class TelaClientes extends javax.swing.JPanel implements Atualizavel {
         txtRg.setText("");
         txtCpf.setText("");
         txtEndereco.setText("");
+        tblClientes.clearSelection();
     }//GEN-LAST:event_btnLimparActionPerformed
 
     private void tblClientesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblClientesMouseClicked
@@ -352,11 +353,7 @@ public class TelaClientes extends javax.swing.JPanel implements Atualizavel {
 
     @Override
     public void aoExibir() {
-        txtCpf.setText("");
-        txtEndereco.setText("");
-        txtNome.setText("");
-        txtRg.setText("");
-        txtSobrenome.setText("");
+        btnLimparActionPerformed(null);
         
         // reload da tabela
     }

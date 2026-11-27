@@ -5,25 +5,28 @@ import br.com.locadora.locadoraveiculos.controller.VeiculoController;
 import br.com.locadora.locadoraveiculos.enums.*;
 
 import java.awt.*;
+import java.text.DecimalFormat;
 import javax.swing.*;
+import javax.swing.text.MaskFormatter;
+import javax.swing.text.NumberFormatter;
 
 public class TelaIncluirVeiculo extends JPanel implements Atualizavel {
 
     private final VeiculoController veiculoCtrl;
 
-    private JComboBox<TipoVeiculo> cbTipo;
-    private JComboBox<Marca> cbMarca;
-    private JComboBox<Estado> cbEstado;
-    private JComboBox<Categoria> cbCategoria;
-    private JComboBox<Object> cbModelo;
+    private final JComboBox<TipoVeiculo> cbTipo;
+    private final JComboBox<Marca> cbMarca;
+    private final JComboBox<Estado> cbEstado;
+    private final JComboBox<Categoria> cbCategoria;
+    private final JComboBox<Object> cbModelo;
 
-    private JTextField txtValor;
-    private JTextField txtPlaca;
-    private JTextField txtAno;
+    private final JFormattedTextField txtValor;
+    private final JFormattedTextField txtPlaca;
+    private final JFormattedTextField txtAno;
 
     public TelaIncluirVeiculo(Navegador nv, VeiculoController veiculoCtrl) {
         this.veiculoCtrl = veiculoCtrl;
-
+        
         setLayout(new BorderLayout(10, 10));
 
         JLabel titulo = new JLabel("Cadastro de Veículos");
@@ -43,9 +46,9 @@ public class TelaIncluirVeiculo extends JPanel implements Atualizavel {
         cbCategoria = new JComboBox<>(Categoria.values());
         cbModelo = new JComboBox<>();
 
-        txtValor = new JTextField();
-        txtPlaca = new JTextField();
-        txtAno = new JTextField();
+        txtValor = criarCampoMonetario();
+        txtPlaca = criarCampoFormatado("UUU-####");
+        txtAno = criarCampoFormatado("####");
 
         painel.add(new JLabel("Tipo de veículo:"));
         painel.add(cbTipo);
@@ -128,16 +131,15 @@ public class TelaIncluirVeiculo extends JPanel implements Atualizavel {
                 (Estado) cbEstado.getSelectedItem(),
                 (Categoria) cbCategoria.getSelectedItem(),
                 (Enum<?>) cbModelo.getSelectedItem(),
-                txtValor.getText(),
-                txtPlaca.getText().trim().toUpperCase(),
-                txtAno.getText()
+                ((Number) txtValor.getValue()).doubleValue(),
+                txtPlaca.getText(),
+                txtAno.getText().replace("_", "")
             );
 
             JOptionPane.showMessageDialog(this,
                     "Veículo cadastrado com sucesso!");
 
             limparCampos();
-
         } catch (IllegalArgumentException e) {
             JOptionPane.showMessageDialog(this,
                     e.getMessage(),
@@ -147,7 +149,7 @@ public class TelaIncluirVeiculo extends JPanel implements Atualizavel {
     }
 
     private void limparCampos() {
-        txtValor.setText("");
+        txtValor.setText("0.00");
         txtPlaca.setText("");
         txtAno.setText("");
 
@@ -176,6 +178,30 @@ public class TelaIncluirVeiculo extends JPanel implements Atualizavel {
     @Override
     public void aoExibir() {
         limparCampos();
+    }
+    
+    private JFormattedTextField criarCampoFormatado(String mascara) {
+        try {
+            MaskFormatter formatador = new MaskFormatter(mascara);
+            formatador.setPlaceholderCharacter('_');
+            return new JFormattedTextField(formatador);
+        } catch(java.text.ParseException e){
+            // Como mascara eh fixa interna, ParseException nao ocorre
+            // Se ocorrer retorna campo sem mascara
+            return new JFormattedTextField();
+        }
+    }
+    
+    private JFormattedTextField criarCampoMonetario() {
+        DecimalFormat formato = new DecimalFormat("#,##0.00");
+        NumberFormatter formatador = new NumberFormatter(formato);
+        formatador.setValueClass(Double.class);
+        formatador.setMinimum(0.0);
+        formatador.setAllowsInvalid(false);
+        
+        JFormattedTextField campo = new JFormattedTextField(formatador);
+        campo.setValue(0.00);
+        return campo;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
