@@ -5,27 +5,108 @@
 package br.com.locadora.locadoraveiculos.view;
 
 import br.com.locadora.locadoraveiculos.controller.VeiculoController;
+import br.com.locadora.locadoraveiculos.enums.Categoria;
+import br.com.locadora.locadoraveiculos.enums.Marca;
+import br.com.locadora.locadoraveiculos.enums.TipoVeiculo;
+import br.com.locadora.locadoraveiculos.model.Automovel;
+import br.com.locadora.locadoraveiculos.model.Motocicleta;
+import br.com.locadora.locadoraveiculos.model.Van;
+import br.com.locadora.locadoraveiculos.model.Veiculo;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.table.AbstractTableModel;
 
-/**
- *
- * @author harpo
- */
 public class TelaVenderVeiculo extends javax.swing.JPanel 
         implements Atualizavel {
+    private final Navegador nv;
     private final VeiculoController veiculoCtrl;
+    private final VeiculoVendaTableModel modeloTabela = new VeiculoVendaTableModel();
 
-    /**
-     * Creates new form TelaVenderVeiculo
-     * @param nv interface de navegação para interagir com CardLayout no JFrame,
-     *      implementada por {@code TelaInicial}
-     * @param veiculoCtrl
-     */
     public TelaVenderVeiculo(Navegador nv, VeiculoController veiculoCtrl) {
+        this.nv = nv;
         this.veiculoCtrl = veiculoCtrl;
         initComponents();
         
-        // descomentar ao inserir o botao para voltar ao menu
-        // btnVoltar.addActionListener(e -> nv.irPara(TelaInicial.MENU));
+        tabelaVeiculos.setModel(modeloTabela);
+        tabelaVeiculos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tabelaVeiculos.getTableHeader().setReorderingAllowed(false);
+
+        // filtros
+        cbTipo.setModel(new DefaultComboBoxModel<>(opcoes(TipoVeiculo.values())));
+        cbMarca.setModel(new DefaultComboBoxModel<>(opcoes(Marca.values())));
+        cbCategoria.setModel(new DefaultComboBoxModel<>(opcoes(Categoria.values())));
+        
+        // listener vender
+        btnVender.addActionListener(e -> venderSelecionado());
+
+        atualizarTabela();
+    }
+
+    private String[] opcoes(Object[] valores) {
+        String[] r = new String[valores.length + 1];
+        r[0] = "Todos";
+        for (int i = 0; i < valores.length; i++) {
+            r[i + 1] = valores[i].toString();
+        }
+        return r;
+    }
+
+    // "Todos" vira null = "sem filtro"
+    private TipoVeiculo tipoSelecionado() {
+        int i = cbTipo.getSelectedIndex();
+        return i > 0 ? TipoVeiculo.values()[i - 1] : null;
+    }
+
+    private Marca marcaSelecionada() {
+        int i = cbMarca.getSelectedIndex();
+        return i > 0 ? Marca.values()[i - 1] : null;
+    }
+
+    private Categoria categoriaSelecionada() {
+        int i = cbCategoria.getSelectedIndex();
+        return i > 0 ? Categoria.values()[i - 1] : null;
+    }
+
+    private void atualizarTabela() {
+        modeloTabela.setVeiculos(veiculoCtrl.filtrar(
+                tipoSelecionado(), marcaSelecionada(), categoriaSelecionada()));
+    }
+
+    private void venderSelecionado() {
+        int linha = tabelaVeiculos.getSelectedRow();
+        if (linha < 0) {
+            JOptionPane.showMessageDialog(this,
+                    "Selecione um veículo na tabela para vender.",
+                    "Nenhum veículo selecionado",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        Veiculo veiculo = modeloTabela.getVeiculo(tabelaVeiculos.convertRowIndexToModel(linha));
+
+        int opcao = JOptionPane.showConfirmDialog(this,
+                "Vender o veículo " + veiculo.getPlaca() + " por "
+                + VeiculoVendaTableModel.formatarMoeda(veiculo.getValorParaVenda()) + "?",
+                "Confirmar venda",
+                JOptionPane.YES_NO_OPTION);
+        if (opcao != JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        try {
+            veiculoCtrl.vender(veiculo);
+            JOptionPane.showMessageDialog(this, "Veículo vendido com sucesso!");
+            atualizarTabela(); // veiculo vendido some
+        } catch (IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(),
+                    "Erro na venda", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     /**
@@ -37,23 +118,234 @@ public class TelaVenderVeiculo extends javax.swing.JPanel
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        lbTitulo = new javax.swing.JLabel();
+        painelFiltros = new javax.swing.JPanel();
+        lbFiltrar = new javax.swing.JLabel();
+        lbTipo = new javax.swing.JLabel();
+        cbTipo = new javax.swing.JComboBox<>();
+        lbMarca = new javax.swing.JLabel();
+        lbCategoria = new javax.swing.JLabel();
+        cbCategoria = new javax.swing.JComboBox<>();
+        cbMarca = new javax.swing.JComboBox<>();
+        scrollTabela = new javax.swing.JScrollPane();
+        tabelaVeiculos = new javax.swing.JTable();
+        btnVender = new javax.swing.JButton();
+        btnVoltar = new javax.swing.JButton();
+
+        lbTitulo.setFont(new java.awt.Font("Inter", 1, 24)); // NOI18N
+        lbTitulo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbTitulo.setText("Vender Veículos");
+
+        lbFiltrar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        lbFiltrar.setText("Filtrar por:");
+
+        lbTipo.setText("Tipo:");
+
+        cbTipo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbTipo.addActionListener(this::cbTipoActionPerformed);
+
+        lbMarca.setText("Marca:");
+
+        lbCategoria.setText("Categoria:");
+
+        cbCategoria.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbCategoria.addActionListener(this::cbCategoriaActionPerformed);
+
+        cbMarca.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbMarca.addActionListener(this::cbMarcaActionPerformed);
+
+        javax.swing.GroupLayout painelFiltrosLayout = new javax.swing.GroupLayout(painelFiltros);
+        painelFiltros.setLayout(painelFiltrosLayout);
+        painelFiltrosLayout.setHorizontalGroup(
+            painelFiltrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(painelFiltrosLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lbFiltrar)
+                .addGap(18, 18, 18)
+                .addComponent(lbTipo)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(cbTipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(lbMarca)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(cbMarca, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(lbCategoria)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(cbCategoria, 0, 75, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        painelFiltrosLayout.setVerticalGroup(
+            painelFiltrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(painelFiltrosLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(painelFiltrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(painelFiltrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(lbTipo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(cbTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painelFiltrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(lbMarca, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(cbMarca, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lbFiltrar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painelFiltrosLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(painelFiltrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(cbCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lbCategoria, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addContainerGap())
+        );
+
+        tabelaVeiculos.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        scrollTabela.setViewportView(tabelaVeiculos);
+
+        btnVender.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnVender.setText("Vender");
+
+        btnVoltar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnVoltar.setText("Voltar");
+        btnVoltar.addActionListener(this::btnVoltarActionPerformed);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lbTitulo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(painelFiltros, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(scrollTabela)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(btnVender, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnVoltar, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lbTitulo)
+                .addGap(18, 18, 18)
+                .addComponent(painelFiltros, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(scrollTabela, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnVoltar, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnVender, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(101, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void cbTipoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbTipoActionPerformed
+        atualizarTabela();
+    }//GEN-LAST:event_cbTipoActionPerformed
+
+    private void cbCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbCategoriaActionPerformed
+        atualizarTabela();
+    }//GEN-LAST:event_cbCategoriaActionPerformed
+
+    private void cbMarcaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbMarcaActionPerformed
+        atualizarTabela();
+    }//GEN-LAST:event_cbMarcaActionPerformed
+
+    private void btnVoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVoltarActionPerformed
+        nv.irPara(TelaInicial.MENU);
+    }//GEN-LAST:event_btnVoltarActionPerformed
+
     @Override
     public void aoExibir() {
-        // limpa todos os campos e reload jTable caso haja
+        // volta os filtros para "Todos" e recarrega a tabela
+        cbTipo.setSelectedIndex(0);
+        cbMarca.setSelectedIndex(0);
+        cbCategoria.setSelectedIndex(0);
+        atualizarTabela();
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnVender;
+    private javax.swing.JButton btnVoltar;
+    private javax.swing.JComboBox<String> cbCategoria;
+    private javax.swing.JComboBox<String> cbMarca;
+    private javax.swing.JComboBox<String> cbTipo;
+    private javax.swing.JLabel lbCategoria;
+    private javax.swing.JLabel lbFiltrar;
+    private javax.swing.JLabel lbMarca;
+    private javax.swing.JLabel lbTipo;
+    private javax.swing.JLabel lbTitulo;
+    private javax.swing.JPanel painelFiltros;
+    private javax.swing.JScrollPane scrollTabela;
+    private javax.swing.JTable tabelaVeiculos;
     // End of variables declaration//GEN-END:variables
+
+    // Modelo da tabela venda: Placa, Marca, Modelo, Ano, Preço para venda.
+    private static class VeiculoVendaTableModel extends AbstractTableModel {
+
+        private static final String[] COLUNAS = {"Placa", "Marca", "Modelo", "Ano", "Preço para venda"};
+
+        // define o formato decimal para real R$
+        private static final DecimalFormat MOEDA = new DecimalFormat(
+                "'R$'#,##0.00", DecimalFormatSymbols.getInstance(Locale.of("pt", "BR")));
+
+        private List<Veiculo> veiculos = new ArrayList<>();
+
+        static String formatarMoeda(double valor) {
+            return MOEDA.format(valor);
+        }
+
+        void setVeiculos(List<Veiculo> novos) {
+            this.veiculos = new ArrayList<>(novos);
+            fireTableDataChanged();
+        }
+
+        Veiculo getVeiculo(int linha) {
+            return veiculos.get(linha);
+        }
+
+        @Override
+        public int getRowCount() {
+            return veiculos.size();
+        }
+
+        @Override
+        public int getColumnCount() {
+            return COLUNAS.length;
+        }
+
+        @Override
+        public String getColumnName(int coluna) {
+            return COLUNAS[coluna];
+        }
+
+        @Override
+        public Object getValueAt(int linha, int coluna) {
+            Veiculo v = veiculos.get(linha);
+            return switch (coluna) {
+                case 0 -> v.getPlaca();
+                case 1 -> v.getMarca();
+                case 2 -> modeloDe(v);
+                case 3 -> String.format("%04d", v.getAno());
+                case 4 -> formatarMoeda(v.getValorParaVenda());
+                default -> "";
+            };
+        }
+
+        private Object modeloDe(Veiculo v) {
+            if (v instanceof Automovel a) return a.getModelo();
+            if (v instanceof Motocicleta m) return m.getModelo();
+            if (v instanceof Van van) return van.getModelo();
+            return "";
+        }
+    }
 }
