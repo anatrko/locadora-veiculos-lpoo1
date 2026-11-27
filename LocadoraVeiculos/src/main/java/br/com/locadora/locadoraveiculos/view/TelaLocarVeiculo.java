@@ -36,15 +36,8 @@ public class TelaLocarVeiculo extends JPanel implements Atualizavel {
     private static final String BUSCA_NOME = "buscar por nome/sobrenome";
     private static final String BUSCA_CPF = "buscar por cpf";
     
-    private final ModeloTabelaClientes modeloCliente = new ModeloTabelaClientes();
-    private final ModeloTabelaVeiculos modeloVeiculo = new ModeloTabelaVeiculos();
-    
-    // ---- tirar dps
-    private JComboBox<Cliente> cbClientes;
-    private JComboBox<Veiculo> cbVeiculos;
-    private JTextField txtDias;
-    private JTextField txtData_old;
-    //------------
+    private final ModeloTabelaClientes modeloClientes = new ModeloTabelaClientes();
+    private final ModeloTabelaVeiculos modeloVeiculos = new ModeloTabelaVeiculos();
 
     public TelaLocarVeiculo(
             Navegador nv,
@@ -58,9 +51,9 @@ public class TelaLocarVeiculo extends JPanel implements Atualizavel {
         
         initComponents();
         
-        tblBuscaCliente.setModel(modeloCliente);
+        tblBuscaCliente.setModel(modeloClientes);
         tblBuscaCliente.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        tblVeiculos.setModel(modeloVeiculo);
+        tblVeiculos.setModel(modeloVeiculos);
         tblVeiculos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         configurarBuscaCliente();
@@ -96,13 +89,13 @@ public class TelaLocarVeiculo extends JPanel implements Atualizavel {
     }
 
     private void buscarClientes() {
-        String termo = (cmbTipoTermo.getSelectedIndex() == 0)
-                ? txtNomeSobrenome.getText().trim()
-                : txtCpf.getText().replaceAll("\\D", "");   // só os dígitos da máscara
-
-        modeloCliente.setClientes(termo.isEmpty()
-                ? clienteCtrl.getClientes()
-                : clienteCtrl.buscar(termo));
+        List<Cliente> resultado;
+        if (cmbTipoTermo.getSelectedIndex() == 0) {
+            resultado = clienteCtrl.buscarPorNome(txtNomeSobrenome.getText());
+        } else {
+            resultado = clienteCtrl.buscarPorCpf(txtCpf.getText());
+        }
+        modeloClientes.setClientes(resultado);
     }
     
     // ---------- filtros de veículo ----------
@@ -137,7 +130,7 @@ public class TelaLocarVeiculo extends JPanel implements Atualizavel {
         TipoVeiculo tipo = (TipoVeiculo) cmbTipoVeiculo.getSelectedItem();
         Marca marca = (Marca) cmbMarca.getSelectedItem();
         Categoria categoria = (Categoria) cmbCategoria.getSelectedItem();
-        modeloVeiculo.setVeiculos(veiculoCtrl.filtrar(tipo, marca, categoria));
+        modeloVeiculos.setVeiculos(veiculoCtrl.filtrar(tipo, marca, categoria));
     }
     
     // ---------- data ----------
@@ -459,13 +452,13 @@ public class TelaLocarVeiculo extends JPanel implements Atualizavel {
     private Cliente clienteSelecionado() {
         int linha = tblBuscaCliente.getSelectedRow();
         return linha < 0 ? null
-                : modeloCliente.getCliente(tblBuscaCliente.convertRowIndexToModel(linha));
+                : modeloClientes.getCliente(tblBuscaCliente.convertRowIndexToModel(linha));
     }
 
     private Veiculo veiculoSelecionado() {
         int linha = tblVeiculos.getSelectedRow();
         return linha < 0 ? null
-                : modeloVeiculo.getVeiculo(tblVeiculos.convertRowIndexToModel(linha));
+                : modeloVeiculos.getVeiculo(tblVeiculos.convertRowIndexToModel(linha));
     }
     
     private void limparFormulario() {
@@ -552,7 +545,7 @@ public class TelaLocarVeiculo extends JPanel implements Atualizavel {
                 case 0 -> c.getNome();
                 case 1 -> c.getSobrenome();
                 case 2 -> c.getRg();
-                case 3 -> c.getCpf();
+                case 3 -> c.getCpf().replaceAll("(\\d{3})(\\d{3})(\\d{3})(\\d{2})","$1.$2.$3-$4"); // apresenta com mascara
                 default -> null;
             };
         }

@@ -34,17 +34,37 @@ public class ClienteRepositorio {
         return clientes;
     }
     
-    // busca os alunos com determinado nome, sobrenome ou cpf
-    public List<Cliente> buscar(String termo) {
-        String t = termo.toLowerCase();
+    // -- dividido a funcao de busca ---
+    // busca por nome e/ou sobrenome (ignora maiúsculas e acentos)
+    public List<Cliente> buscarPorNome(String termo) {
+        String t = normalizar(termo);
         List<Cliente> r = new ArrayList<>();
-        for(Cliente c: clientes){
-            if(c.getNome().toLowerCase().contains(t) ||
-                    c.getSobrenome().toLowerCase().contains(t) ||
-                    c.getCpf().contains(t))
+        for (Cliente c : clientes) {
+            String nome = normalizar(c.getNome());
+            String sobrenome = normalizar(c.getSobrenome());
+            String completo = nome + " " + sobrenome;
+            if (completo.contains(t)) {
                 r.add(c);
+            }
         }
         return r;
+    }
+
+    // busca por CPF (termo só com dígitos)
+    public List<Cliente> buscarPorCpf(String cpf) {
+        List<Cliente> r = new ArrayList<>();
+        for (Cliente c : clientes) {
+            if (c.getCpf().contains(cpf)) {
+                r.add(c);
+            }
+        }
+        return r;
+    }
+
+    private String normalizar(String s) {
+        String semAcento = java.text.Normalizer.normalize(s, java.text.Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "");
+        return semAcento.toLowerCase().trim();
     }
     
     public boolean existeCpf(String cpf) {

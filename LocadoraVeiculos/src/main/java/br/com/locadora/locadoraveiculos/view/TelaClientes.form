@@ -107,11 +107,11 @@
                                   </Group>
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="txtRg" alignment="0" min="-2" pref="302" max="-2" attributes="0"/>
-                                          <Component id="txtSobrenome" alignment="0" min="-2" pref="302" max="-2" attributes="0"/>
-                                          <Component id="txtCpf" alignment="0" min="-2" pref="302" max="-2" attributes="0"/>
-                                          <Component id="txtEndereco" alignment="0" min="-2" pref="302" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                          <Component id="txtRg" alignment="0" pref="302" max="32767" attributes="0"/>
+                                          <Component id="txtSobrenome" alignment="0" pref="302" max="32767" attributes="0"/>
+                                          <Component id="txtEndereco" alignment="0" pref="302" max="32767" attributes="0"/>
+                                          <Component id="txtCpf" alignment="0" max="32767" attributes="0"/>
                                       </Group>
                                       <EmptySpace max="32767" attributes="0"/>
                                   </Group>
@@ -186,9 +186,14 @@
             </Component>
             <Component class="javax.swing.JTextField" name="txtRg">
             </Component>
-            <Component class="javax.swing.JTextField" name="txtCpf">
-            </Component>
             <Component class="javax.swing.JTextField" name="txtEndereco">
+            </Component>
+            <Component class="javax.swing.JFormattedTextField" name="txtCpf">
+              <Properties>
+                <Property name="formatterFactory" type="javax.swing.JFormattedTextField$AbstractFormatterFactory" editor="org.netbeans.modules.form.editors.AbstractFormatterFactoryEditor" preCode="try {" postCode="} catch (java.text.ParseException ex) {&#xa;ex.printStackTrace();&#xa;}">
+                  <Format format="###.###.###-##" subtype="-1" type="5"/>
+                </Property>
+              </Properties>
             </Component>
           </SubComponents>
         </Container>

@@ -20,12 +20,15 @@ public class ClienteController {
         nome = nome.trim(); 
         sobrenome = sobrenome.trim();
         rg = rg.trim();
-        cpf = cpf.trim();
         endereco = endereco.trim();
         
         // verificacao e conversoes
         if( nome.isBlank() || sobrenome.isBlank() || rg.isBlank() || cpf.isBlank() || endereco.isBlank() )
             throw new IllegalArgumentException("Preencha todos os campos!");
+        
+        if(!cpf.matches("^\\d{3}.\\d{3}.\\d{3}-\\d{2}$"))
+            throw new IllegalArgumentException("Formato do CPF incorreto!");
+        cpf = cpf.replaceAll("\\D", ""); // limpa a formatacao para armazenar sem a mascara
         
         if( clientes.existeCpf(cpf) )
             throw new IllegalArgumentException("CPF encontrado no sistema. Não são permitido dois clientes com mesmo CPF.");
@@ -54,6 +57,10 @@ public class ClienteController {
         
         if( nome.isBlank() || sobrenome.isBlank() || rg.isBlank() || cpf.isBlank() || endereco.isBlank() )
             throw new IllegalArgumentException("Preencha todos os campos!");
+        
+        if(!cpf.matches("^\\d{3}.\\d{3}.\\d{3}-\\d{2}$"))
+            throw new IllegalArgumentException("Formato do CPF incorreto!");
+        cpf = cpf.replaceAll("\\D", ""); // limpa a formatacao para armazenar sem a mascara
         
         if( clientes.existeCpf(cpf, cliente) ) // procura um cpf igual, ignorando o cliente indicado
             throw new IllegalArgumentException("CPF encontrado no sistema. Não são permitidos dois clientes com mesmo CPF.");
@@ -97,8 +104,15 @@ public class ClienteController {
         return clientes.listar();
     }
     
-    // busca os alunos com determinado nome, sobrenome ou cpf
-    public List<Cliente> buscar(String termo) {
-        return Collections.unmodifiableList(clientes.buscar(termo));
+   public List<Cliente> buscarPorNome(String termo) {
+        if (termo == null || termo.isBlank()) return clientes.listar();
+        return Collections.unmodifiableList(clientes.buscarPorNome(termo));
+    }
+
+    public List<Cliente> buscarPorCpf(String cpf) {
+        if (cpf == null) return clientes.listar();
+        String digitos = cpf.replaceAll("\\D", "");
+        if (digitos.isEmpty()) return clientes.listar();
+        return Collections.unmodifiableList(clientes.buscarPorCpf(digitos));
     }
 }

@@ -6,16 +6,16 @@ package br.com.locadora.locadoraveiculos.view;
 
 import br.com.locadora.locadoraveiculos.controller.ClienteController;
 import br.com.locadora.locadoraveiculos.model.Cliente;
-import br.com.locadora.locadoraveiculos.model.Veiculo;
+import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
 import java.util.List;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author anaca
  */
 public class TelaClientes extends javax.swing.JPanel implements Atualizavel {
-    private List<Cliente> clientes;
     private final ClienteController clienteCtrl;
     private final ModeloTabelaClientes modeloTabela =
             new ModeloTabelaClientes();
@@ -28,7 +28,6 @@ public class TelaClientes extends javax.swing.JPanel implements Atualizavel {
     */
        public TelaClientes(Navegador nv, ClienteController clienteCtrl) {
            this.clienteCtrl = clienteCtrl;
-           this.clientes = clienteCtrl.getClientes();
 
            initComponents();
            tblClientes.setModel(modeloTabela);
@@ -55,8 +54,8 @@ public class TelaClientes extends javax.swing.JPanel implements Atualizavel {
         txtNome = new javax.swing.JTextField();
         txtSobrenome = new javax.swing.JTextField();
         txtRg = new javax.swing.JTextField();
-        txtCpf = new javax.swing.JTextField();
         txtEndereco = new javax.swing.JTextField();
+        txtCpf = new javax.swing.JFormattedTextField();
         jScrollPane10 = new javax.swing.JScrollPane();
         tblClientes = new javax.swing.JTable();
         jPanel3 = new javax.swing.JPanel();
@@ -77,6 +76,12 @@ public class TelaClientes extends javax.swing.JPanel implements Atualizavel {
         Cpf.setText("CPF:");
 
         Endereco.setText("Endereço:");
+
+        try {
+            txtCpf.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("###.###.###-##")));
+        } catch (java.text.ParseException ex) {
+            ex.printStackTrace();
+        }
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -101,11 +106,11 @@ public class TelaClientes extends javax.swing.JPanel implements Atualizavel {
                                 .addGap(33, 33, 33))
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addGap(18, 18, 18)
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txtRg, javax.swing.GroupLayout.PREFERRED_SIZE, 302, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txtSobrenome, javax.swing.GroupLayout.PREFERRED_SIZE, 302, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txtCpf, javax.swing.GroupLayout.PREFERRED_SIZE, 302, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txtEndereco, javax.swing.GroupLayout.PREFERRED_SIZE, 302, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(txtRg, javax.swing.GroupLayout.DEFAULT_SIZE, 302, Short.MAX_VALUE)
+                                    .addComponent(txtSobrenome, javax.swing.GroupLayout.DEFAULT_SIZE, 302, Short.MAX_VALUE)
+                                    .addComponent(txtEndereco, javax.swing.GroupLayout.DEFAULT_SIZE, 302, Short.MAX_VALUE)
+                                    .addComponent(txtCpf))
                                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))))
         );
         jPanel2Layout.setVerticalGroup(
@@ -251,25 +256,19 @@ public class TelaClientes extends javax.swing.JPanel implements Atualizavel {
                 txtEndereco.getText()
             );
 
-            modeloTabela.fireTableDataChanged();
+            modeloTabela.setClientes(clienteCtrl.getClientes());
             btnLimparActionPerformed(evt);
 
             javax.swing.JOptionPane.showMessageDialog(this,
                     "Cliente cadastrado com sucesso!");
 
         } catch (IllegalArgumentException ex) {
-            javax.swing.JOptionPane.showMessageDialog(this, ex.getMessage());
+            erro(ex.getMessage());
         }
     }//GEN-LAST:event_btnCadastrarActionPerformed
 
     private void btnAtualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtualizarActionPerformed
         int linha = tblClientes.getSelectedRow();
-
-        if (linha < 0) {
-            javax.swing.JOptionPane.showMessageDialog(this,
-                    "Selecione um cliente na tabela!");
-            return;
-        }
 
         Cliente cliente = modeloTabela.getCliente(linha);
 
@@ -283,14 +282,14 @@ public class TelaClientes extends javax.swing.JPanel implements Atualizavel {
                 txtEndereco.getText()
             );
 
-            modeloTabela.fireTableRowsUpdated(linha, linha);
+            modeloTabela.setClientes(clienteCtrl.getClientes());
             btnLimparActionPerformed(evt);
 
             javax.swing.JOptionPane.showMessageDialog(this,
                     "Cliente atualizado com sucesso!");
 
         } catch (IllegalArgumentException ex) {
-            javax.swing.JOptionPane.showMessageDialog(this, ex.getMessage());
+            erro(ex.getMessage());
         }
     }//GEN-LAST:event_btnAtualizarActionPerformed
 
@@ -298,8 +297,7 @@ public class TelaClientes extends javax.swing.JPanel implements Atualizavel {
         int linha = tblClientes.getSelectedRow();
 
         if (linha < 0) {
-            javax.swing.JOptionPane.showMessageDialog(this,
-                    "Selecione um cliente na tabela!");
+            erro("Selecione um cliente na tabela!");
             return;
         }
 
@@ -316,14 +314,13 @@ public class TelaClientes extends javax.swing.JPanel implements Atualizavel {
             try {
                 clienteCtrl.excluir(cliente);
 
-                modeloTabela.fireTableDataChanged();
-                btnLimparActionPerformed(evt);
+                modeloTabela.setClientes(clienteCtrl.getClientes());
 
                 javax.swing.JOptionPane.showMessageDialog(this,
                         "Cliente excluído com sucesso!");
 
             } catch (IllegalArgumentException ex) {
-                javax.swing.JOptionPane.showMessageDialog(this, ex.getMessage());
+                erro(ex.getMessage());
             }
         }
     }//GEN-LAST:event_btnExcluirActionPerformed
@@ -341,7 +338,7 @@ public class TelaClientes extends javax.swing.JPanel implements Atualizavel {
         int linha = tblClientes.getSelectedRow();
 
         if (linha >= 0) {
-            Cliente cliente = clientes.get(linha);
+            Cliente cliente = modeloTabela.getCliente(linha);
 
             txtNome.setText(cliente.getNome());
             txtSobrenome.setText(cliente.getSobrenome());
@@ -354,8 +351,14 @@ public class TelaClientes extends javax.swing.JPanel implements Atualizavel {
     @Override
     public void aoExibir() {
         btnLimparActionPerformed(null);
-        
-        // reload da tabela
+        modeloTabela.setClientes(clienteCtrl.getClientes());
+    }
+    
+
+    private void erro(String mensagem) {
+        JOptionPane.showMessageDialog(this,
+                mensagem == null ? "Confira os dados informados." : mensagem,
+                "Erro na locação", JOptionPane.ERROR_MESSAGE);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -374,7 +377,7 @@ public class TelaClientes extends javax.swing.JPanel implements Atualizavel {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane10;
     private javax.swing.JTable tblClientes;
-    private javax.swing.JTextField txtCpf;
+    private javax.swing.JFormattedTextField txtCpf;
     private javax.swing.JTextField txtEndereco;
     private javax.swing.JTextField txtNome;
     private javax.swing.JTextField txtRg;
@@ -382,42 +385,48 @@ public class TelaClientes extends javax.swing.JPanel implements Atualizavel {
     // End of variables declaration//GEN-END:variables
     private class ModeloTabelaClientes extends AbstractTableModel {
 
-    private final String[] colunas = {
-        "Nome", "Sobrenome", "RG", "CPF", "Endereço"
-    };
-
-    @Override
-    public int getRowCount() {
-        return clientes.size();
-    }
-
-    @Override
-    public int getColumnCount() {
-        return colunas.length;
-    }
-
-    @Override
-    public String getColumnName(int coluna) {
-        return colunas[coluna];
-    }
-
-    @Override
-    public Object getValueAt(int linha, int coluna) {
-        Cliente c = clientes.get(linha);
-
-        return switch (coluna) {
-            case 0 -> c.getNome();
-            case 1 -> c.getSobrenome();
-            case 2 -> c.getRg();
-            case 3 -> c.getCpf();
-            case 4 -> c.getEndereco();
-            default -> null;
+        private List<Cliente> clientes = new ArrayList<>();
+        private final String[] colunas = {
+            "Nome", "Sobrenome", "RG", "CPF", "Endereço"
         };
-    }
-    
-    public Cliente getCliente(int linha) {
-        return clientes.get(linha);
-    }
-    
+
+        @Override
+        public int getRowCount() {
+            return clientes.size();
+        }
+
+        @Override
+        public int getColumnCount() {
+            return colunas.length;
+        }
+
+        @Override
+        public String getColumnName(int coluna) {
+            return colunas[coluna];
+        }
+
+        @Override
+        public Object getValueAt(int linha, int coluna) {
+            Cliente c = clientes.get(linha);
+
+            return switch (coluna) {
+                case 0 -> c.getNome();
+                case 1 -> c.getSobrenome();
+                case 2 -> c.getRg();
+                case 3 -> c.getCpf().replaceAll("(\\d{3})(\\d{3})(\\d{3})(\\d{2})","$1.$2.$3-$4"); // apresenta com mascara
+                case 4 -> c.getEndereco();
+                default -> null;
+            };
+        }
+
+        public Cliente getCliente(int linha) {
+            if (linha < 0 || linha >= clientes.size()) return null;
+            return clientes.get(linha);
+        }
+
+        public void setClientes(List<Cliente> lista) {
+            this.clientes = new ArrayList<>(lista);
+            fireTableDataChanged();
+        }
     }
 }
