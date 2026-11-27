@@ -219,6 +219,7 @@ public class TelaLocarVeiculo extends JPanel implements Atualizavel {
             .addComponent(txtCpf)
         );
 
+        titulo.setFont(new java.awt.Font("Inter", 1, 24)); // NOI18N
         titulo.setText("Locação de Veículos");
 
         containerForm.setToolTipText("");
@@ -333,7 +334,7 @@ public class TelaLocarVeiculo extends JPanel implements Atualizavel {
         containerFormLayout.setVerticalGroup(
             containerFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(containerFormLayout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(containerFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(labelBusca)
                     .addComponent(cmbTipoTermo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -354,8 +355,7 @@ public class TelaLocarVeiculo extends JPanel implements Atualizavel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(containerFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(labelData)
-                    .addComponent(txtData, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(txtData, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
         javax.swing.GroupLayout containerConteudoLayout = new javax.swing.GroupLayout(containerConteudo);
@@ -363,16 +363,15 @@ public class TelaLocarVeiculo extends JPanel implements Atualizavel {
         containerConteudoLayout.setHorizontalGroup(
             containerConteudoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, containerConteudoLayout.createSequentialGroup()
-                .addContainerGap(65, Short.MAX_VALUE)
+                .addContainerGap(15, Short.MAX_VALUE)
                 .addComponent(containerForm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(65, Short.MAX_VALUE))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
         containerConteudoLayout.setVerticalGroup(
             containerConteudoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(containerConteudoLayout.createSequentialGroup()
-                .addContainerGap()
                 .addComponent(containerForm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(0, 6, Short.MAX_VALUE))
         );
 
         btnLocar.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N

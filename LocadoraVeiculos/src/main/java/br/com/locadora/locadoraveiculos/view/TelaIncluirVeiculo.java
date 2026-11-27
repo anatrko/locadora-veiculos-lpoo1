@@ -28,8 +28,10 @@ public class TelaIncluirVeiculo extends JPanel implements Atualizavel {
         this.veiculoCtrl = veiculoCtrl;
         
         setLayout(new BorderLayout(10, 10));
+        setPreferredSize(new Dimension(500, 600));
 
         JLabel titulo = new JLabel("Cadastro de Veículos");
+        titulo.setFont(new Font("Inter", Font.BOLD, 24));
         titulo.setHorizontalAlignment(SwingConstants.CENTER);
         add(titulo, BorderLayout.NORTH);
 
@@ -103,23 +105,23 @@ public class TelaIncluirVeiculo extends JPanel implements Atualizavel {
         }
 
         switch (tipo) {
-            case AUTOMOVEL:
+            case AUTOMOVEL -> {
                 for (ModeloAutomovel modelo : ModeloAutomovel.values()) {
                     cbModelo.addItem(modelo);
                 }
-                break;
+            }
 
-            case MOTOCICLETA:
+            case MOTOCICLETA -> {
                 for (ModeloMotocicleta modelo : ModeloMotocicleta.values()) {
                     cbModelo.addItem(modelo);
                 }
-                break;
+            }
 
-            case VAN:
+            case VAN -> {
                 for (ModeloVan modelo : ModeloVan.values()) {
                     cbModelo.addItem(modelo);
                 }
-                break;
+            }
         }
     }
 

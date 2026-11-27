@@ -7,6 +7,9 @@ package br.com.locadora.locadoraveiculos.view;
 import br.com.locadora.locadoraveiculos.controller.*;
 import java.awt.CardLayout;
 import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Insets;
 import javax.swing.JPanel;
 
 /**
@@ -23,7 +26,32 @@ public final class TelaInicial extends javax.swing.JFrame
     public static final String DEVOLVER_VEICULO = "devolver veiculo";
     public static final String VENDER_VEICULO = "vender veiculo";
     
-    private final CardLayout cl = new CardLayout();
+    private final CardLayout cl = new CardLayout() {
+        // override deste metodo permite atualizar o tamanho de JFrame de acordo com o JPanel visivel em CardLayout
+        //  para que atualize eh necessario o componente visivel possua PreferredSize definido 
+        @Override
+        public Dimension preferredLayoutSize(Container parent) {
+            Component visivel = getVisibleComponent(parent);
+            if (visivel != null) {
+                Insets insets = parent.getInsets();
+                Dimension pref = visivel.getPreferredSize();
+                return new Dimension(
+                    pref.width + insets.left + insets.right,
+                    pref.height + insets.top + insets.bottom
+                );
+            }
+            return super.preferredLayoutSize(parent);
+        }
+
+        public Component getVisibleComponent(Container parent) {
+            for (Component comp : parent.getComponents()) {
+                if (comp.isVisible()) {
+                    return comp;
+                }
+            }
+            return null;
+        }
+    };
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(TelaInicial.class.getName());
 
     /**
@@ -44,11 +72,10 @@ public final class TelaInicial extends javax.swing.JFrame
         adicionarTela(new TelaLocarVeiculo(this, clienteCtrl, veiculoCtrl, locacaoCtrl), LOCAR_VEICULO);
         adicionarTela(new TelaDevolverVeiculo(this, locacaoCtrl), DEVOLVER_VEICULO);
         adicionarTela(new TelaVenderVeiculo(this, veiculoCtrl), VENDER_VEICULO);
-        
-        setLocationRelativeTo(null);
         pack();
         
         irPara(MENU);
+        setLocationRelativeTo(null);
     }
 
     /**
@@ -63,6 +90,7 @@ public final class TelaInicial extends javax.swing.JFrame
         container = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
 
         container.setPreferredSize(null);
 
@@ -70,11 +98,11 @@ public final class TelaInicial extends javax.swing.JFrame
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(container, javax.swing.GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE)
+            .addComponent(container, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(container, javax.swing.GroupLayout.DEFAULT_SIZE, 697, Short.MAX_VALUE)
+            .addComponent(container, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -100,7 +128,6 @@ public final class TelaInicial extends javax.swing.JFrame
             logger.log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-        
     }
     
     @Override
@@ -111,6 +138,9 @@ public final class TelaInicial extends javax.swing.JFrame
             }
         }
         cl.show(container, tela);
+        // atualiza o tamanho de JFrame
+        container.revalidate();
+        this.pack();
     }
     
     private void adicionarTela(JPanel painel, String nome) {
