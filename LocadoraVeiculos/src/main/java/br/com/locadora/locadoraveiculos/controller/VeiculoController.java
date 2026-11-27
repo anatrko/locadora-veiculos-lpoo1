@@ -69,7 +69,7 @@ public class VeiculoController {
             throw new IllegalArgumentException("Veículo não selecionado. Selecione um veículo disponível para venda.");
         
             //valida se o veiculo esta disponivel
-        if( veiculo.getEstado() != Estado.DISPONIVEL || veiculo.getEstado() != Estado.NOVO)
+        if( veiculo.getEstado() != Estado.DISPONIVEL && veiculo.getEstado() != Estado.NOVO)
             throw new IllegalArgumentException("Veículo escolhido não está disponível para venda.");
         
         veiculo.vender();
