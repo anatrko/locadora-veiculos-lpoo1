@@ -102,7 +102,7 @@ public class ClienteController {
 
     
     public List<Cliente> getClientes() {
-        return clientes.listar();
+        return Collections.unmodifiableList(clientes.listar());
     }
     
    public List<Cliente> buscarPorNome(String termo) {
