@@ -38,7 +38,7 @@ public class LocacaoController {
             throw new IllegalArgumentException("Cliente ou veículo não selecionado. Selecione um clinte e um veículo para locar.");
         
             //valida se o veiculo esta disponivel
-        if( veiculo.getEstado() != Estado.DISPONIVEL || veiculo.getEstado() != Estado.NOVO)
+        if( veiculo.getEstado() == Estado.LOCADO || veiculo.getEstado() == Estado.VENDIDO)
             throw new IllegalArgumentException("Veículo escolhido não está disponível para locacação.");
         
         Calendar dataComparacao = (Calendar) data.clone();
