@@ -24,12 +24,10 @@ import javax.swing.table.AbstractTableModel;
 
 public class TelaVenderVeiculo extends javax.swing.JPanel 
         implements Atualizavel {
-    private final Navegador nv;
     private final VeiculoController veiculoCtrl;
     private final VeiculoVendaTableModel modeloTabela = new VeiculoVendaTableModel();
 
     public TelaVenderVeiculo(Navegador nv, VeiculoController veiculoCtrl) {
-        this.nv = nv;
         this.veiculoCtrl = veiculoCtrl;
         initComponents();
         
@@ -44,6 +42,8 @@ public class TelaVenderVeiculo extends javax.swing.JPanel
         
         // listener vender
         btnVender.addActionListener(e -> venderSelecionado());
+        
+        btnVoltar.addActionListener(e -> nv.irPara(TelaInicial.MENU));
 
         atualizarTabela();
     }
@@ -121,12 +121,13 @@ public class TelaVenderVeiculo extends javax.swing.JPanel
         lbTitulo = new javax.swing.JLabel();
         painelFiltros = new javax.swing.JPanel();
         lbFiltrar = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
         lbTipo = new javax.swing.JLabel();
-        cbTipo = new javax.swing.JComboBox<>();
         lbMarca = new javax.swing.JLabel();
         lbCategoria = new javax.swing.JLabel();
-        cbCategoria = new javax.swing.JComboBox<>();
+        cbTipo = new javax.swing.JComboBox<>();
         cbMarca = new javax.swing.JComboBox<>();
+        cbCategoria = new javax.swing.JComboBox<>();
         scrollTabela = new javax.swing.JScrollPane();
         tabelaVeiculos = new javax.swing.JTable();
         btnVender = new javax.swing.JButton();
@@ -136,63 +137,51 @@ public class TelaVenderVeiculo extends javax.swing.JPanel
         lbTitulo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbTitulo.setText("Vender Veículos");
 
-        lbFiltrar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        lbFiltrar.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         lbFiltrar.setText("Filtrar por:");
 
+        jPanel1.setLayout(new java.awt.GridLayout(2, 3, 25, 0));
+
         lbTipo.setText("Tipo:");
+        jPanel1.add(lbTipo);
+
+        lbMarca.setText("Marca:");
+        jPanel1.add(lbMarca);
+
+        lbCategoria.setText("Categoria:");
+        jPanel1.add(lbCategoria);
 
         cbTipo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cbTipo.addActionListener(this::cbTipoActionPerformed);
-
-        lbMarca.setText("Marca:");
-
-        lbCategoria.setText("Categoria:");
-
-        cbCategoria.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        cbCategoria.addActionListener(this::cbCategoriaActionPerformed);
+        jPanel1.add(cbTipo);
 
         cbMarca.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cbMarca.addActionListener(this::cbMarcaActionPerformed);
+        jPanel1.add(cbMarca);
+
+        cbCategoria.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbCategoria.addActionListener(this::cbCategoriaActionPerformed);
+        jPanel1.add(cbCategoria);
 
         javax.swing.GroupLayout painelFiltrosLayout = new javax.swing.GroupLayout(painelFiltros);
         painelFiltros.setLayout(painelFiltrosLayout);
         painelFiltrosLayout.setHorizontalGroup(
             painelFiltrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(painelFiltrosLayout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 427, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(painelFiltrosLayout.createSequentialGroup()
+                .addGap(43, 43, 43)
                 .addComponent(lbFiltrar)
-                .addGap(18, 18, 18)
-                .addComponent(lbTipo)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cbTipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(lbMarca)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cbMarca, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(lbCategoria)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cbCategoria, 0, 75, Short.MAX_VALUE)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         painelFiltrosLayout.setVerticalGroup(
             painelFiltrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(painelFiltrosLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(painelFiltrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(painelFiltrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(lbTipo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(cbTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painelFiltrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(lbMarca, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(cbMarca, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(lbFiltrar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painelFiltrosLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addGroup(painelFiltrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(cbCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lbCategoria, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addContainerGap())
+                .addComponent(lbFiltrar, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         tabelaVeiculos.setModel(new javax.swing.table.DefaultTableModel(
@@ -208,12 +197,11 @@ public class TelaVenderVeiculo extends javax.swing.JPanel
         ));
         scrollTabela.setViewportView(tabelaVeiculos);
 
-        btnVender.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnVender.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         btnVender.setText("Vender");
 
-        btnVoltar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnVoltar.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         btnVoltar.setText("Voltar");
-        btnVoltar.addActionListener(this::btnVoltarActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -227,7 +215,7 @@ public class TelaVenderVeiculo extends javax.swing.JPanel
                     .addComponent(scrollTabela)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(btnVender, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 128, Short.MAX_VALUE)
                         .addComponent(btnVoltar, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
@@ -236,15 +224,15 @@ public class TelaVenderVeiculo extends javax.swing.JPanel
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(lbTitulo)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(painelFiltros, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scrollTabela, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(scrollTabela, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnVoltar, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnVender, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(101, Short.MAX_VALUE))
+                .addContainerGap(236, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -259,10 +247,6 @@ public class TelaVenderVeiculo extends javax.swing.JPanel
     private void cbMarcaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbMarcaActionPerformed
         atualizarTabela();
     }//GEN-LAST:event_cbMarcaActionPerformed
-
-    private void btnVoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVoltarActionPerformed
-        nv.irPara(TelaInicial.MENU);
-    }//GEN-LAST:event_btnVoltarActionPerformed
 
     @Override
     public void aoExibir() {
@@ -279,6 +263,7 @@ public class TelaVenderVeiculo extends javax.swing.JPanel
     private javax.swing.JComboBox<String> cbCategoria;
     private javax.swing.JComboBox<String> cbMarca;
     private javax.swing.JComboBox<String> cbTipo;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel lbCategoria;
     private javax.swing.JLabel lbFiltrar;
     private javax.swing.JLabel lbMarca;
@@ -310,6 +295,7 @@ public class TelaVenderVeiculo extends javax.swing.JPanel
         }
 
         Veiculo getVeiculo(int linha) {
+            if(linha < 0 || linha >= veiculos.size()) return null;
             return veiculos.get(linha);
         }
 

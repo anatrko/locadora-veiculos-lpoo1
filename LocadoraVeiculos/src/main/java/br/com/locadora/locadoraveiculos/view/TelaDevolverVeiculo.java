@@ -5,6 +5,19 @@
 package br.com.locadora.locadoraveiculos.view;
 
 import br.com.locadora.locadoraveiculos.controller.LocacaoController;
+import br.com.locadora.locadoraveiculos.model.Automovel;
+import br.com.locadora.locadoraveiculos.model.Motocicleta;
+import br.com.locadora.locadoraveiculos.model.Van;
+import br.com.locadora.locadoraveiculos.model.Veiculo;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import javax.swing.JOptionPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.table.AbstractTableModel;
 
 /**
  *
@@ -13,6 +26,7 @@ import br.com.locadora.locadoraveiculos.controller.LocacaoController;
 public class TelaDevolverVeiculo extends javax.swing.JPanel
         implements Atualizavel {
     private final LocacaoController locacaoCtrl;
+    private final VeiculoLocadoTableModel modeloTabela = new VeiculoLocadoTableModel();
 
     /**
      * Creates new form TelaDevolverVeiculo
@@ -24,8 +38,47 @@ public class TelaDevolverVeiculo extends javax.swing.JPanel
         this.locacaoCtrl = locacaoCtrl;
         initComponents();
         
-        // descomentar ao inserir o botao para voltar ao menu
-        // btnVoltar.addActionListener(e -> nv.irPara(TelaInicial.MENU));
+        tabelaVeiculos.setModel(modeloTabela);
+        tabelaVeiculos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tabelaVeiculos.getTableHeader().setReorderingAllowed(false);
+        
+        btnDevolver.addActionListener(e -> devolverLocado());
+        btnVoltar.addActionListener(e -> nv.irPara(TelaInicial.MENU));
+    }
+    
+    private void atualizarTabela() {
+        modeloTabela.setVeiculos(locacaoCtrl.listarLocados());
+    }
+    
+    private void devolverLocado() {
+        int linha = tabelaVeiculos.getSelectedRow();
+        if (linha < 0) {
+            JOptionPane.showMessageDialog(this,
+                    "Selecione um veículo na tabela para devolver.",
+                    "Nenhum veículo selecionado",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        Veiculo veiculo = modeloTabela.getVeiculo(tabelaVeiculos.convertRowIndexToModel(linha));
+
+        int opcao = JOptionPane.showConfirmDialog(this,
+                "Devolver a locação de "+ veiculo.getLocacao().getCliente().getNome() +" - veículo " +veiculo.getPlaca() + " ?",
+                "Confirmar devolução",
+                JOptionPane.YES_NO_OPTION);
+        if (opcao != JOptionPane.YES_OPTION) {
+            tabelaVeiculos.clearSelection();
+            return;
+        }
+
+        try {
+            locacaoCtrl.devolver(veiculo);
+            JOptionPane.showMessageDialog(this, "Locação devolvida com sucesso!");
+            atualizarTabela(); // veiculo vendido some
+        } catch (IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(),
+                    "Erro na venda", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     /**
@@ -37,24 +90,159 @@ public class TelaDevolverVeiculo extends javax.swing.JPanel
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        lbTitulo = new javax.swing.JLabel();
+        scrollTabela = new javax.swing.JScrollPane();
+        tabelaVeiculos = new javax.swing.JTable();
+        containerBotoes = new javax.swing.JPanel();
+        btnVoltar = new javax.swing.JButton();
+        btnDevolver = new javax.swing.JButton();
+
+        lbTitulo.setFont(new java.awt.Font("Inter", 1, 24)); // NOI18N
+        lbTitulo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbTitulo.setText("Devolver Veículo Locado");
+
+        tabelaVeiculos.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        scrollTabela.setViewportView(tabelaVeiculos);
+
+        btnVoltar.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+        btnVoltar.setText("Voltar");
+
+        btnDevolver.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+        btnDevolver.setText("Devolver Veículo");
+
+        javax.swing.GroupLayout containerBotoesLayout = new javax.swing.GroupLayout(containerBotoes);
+        containerBotoes.setLayout(containerBotoesLayout);
+        containerBotoesLayout.setHorizontalGroup(
+            containerBotoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(containerBotoesLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnVoltar, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(70, 70, 70)
+                .addComponent(btnDevolver, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        containerBotoesLayout.setVerticalGroup(
+            containerBotoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnVoltar, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE)
+            .addComponent(btnDevolver, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lbTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 588, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+            .addComponent(containerBotoes, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(scrollTabela)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(19, 19, 19)
+                .addComponent(lbTitulo)
+                .addGap(18, 18, 18)
+                .addComponent(scrollTabela, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(containerBotoes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(190, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     @Override
     public void aoExibir() {
-        // limpa todos os campos e reload jTable caso haja
+        atualizarTabela();
     }
 
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnDevolver;
+    private javax.swing.JButton btnVoltar;
+    private javax.swing.JPanel containerBotoes;
+    private javax.swing.JLabel lbTitulo;
+    private javax.swing.JScrollPane scrollTabela;
+    private javax.swing.JTable tabelaVeiculos;
     // End of variables declaration//GEN-END:variables
+
+    // Modelo da tabela venda: Cliente, Placa, Marca, Modelo, Ano, Data Locacao, Preço Diaria, Qtdade Dias e Valor Locacao.
+    private class VeiculoLocadoTableModel extends AbstractTableModel {
+
+        private static final String[] COLUNAS = {
+            "Cliente", "Placa", "Marca", "Modelo", "Ano", "Data", "Valor Diária", "Total Dias", "Valor Locação"
+        };
+
+        // define o formato decimal para real R$
+        private static final DecimalFormat MOEDA = new DecimalFormat(
+                "'R$'#,##0.00", DecimalFormatSymbols.getInstance(Locale.of("pt", "BR")));
+        private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+        private List<Veiculo> veiculos = new ArrayList<>();
+
+        static String formatarMoeda(double valor) {
+            return MOEDA.format(valor);
+        }
+
+        void setVeiculos(List<Veiculo> novos) {
+            this.veiculos = new ArrayList<>(novos);
+            fireTableDataChanged();
+        }
+
+        Veiculo getVeiculo(int linha) {
+            if(linha < 0 || linha >= veiculos.size()) return null;
+            return veiculos.get(linha);
+        }
+
+        @Override
+        public int getRowCount() {
+            return veiculos.size();
+        }
+
+        @Override
+        public int getColumnCount() {
+            return COLUNAS.length;
+        }
+
+        @Override
+        public String getColumnName(int coluna) {
+            return COLUNAS[coluna];
+        }
+
+        @Override
+        public Object getValueAt(int linha, int coluna) {
+            Veiculo v = veiculos.get(linha);
+            return switch (coluna) {
+                case 0 -> v.getLocacao().getCliente().getNome() +" "+ v.getLocacao().getCliente().getNome();
+                case 1 -> v.getPlaca();
+                case 2 -> v.getMarca();
+                case 3 -> modeloDe(v);
+                case 4 -> String.format("%04d", v.getAno());
+                case 5 -> dateFormat.format(v.getLocacao().getData().getTime());
+                case 6 -> formatarMoeda(v.getValorDiariaLocacao());
+                case 7 -> v.getLocacao().getDias();
+                case 8 -> formatarMoeda(v.getLocacao().getValor());
+                default -> "";
+            };
+        }
+
+        private Object modeloDe(Veiculo v) {
+            if (v instanceof Automovel a) return a.getModelo();
+            if (v instanceof Motocicleta m) return m.getModelo();
+            if (v instanceof Van van) return van.getModelo();
+            return "";
+        }
+    }
 }
